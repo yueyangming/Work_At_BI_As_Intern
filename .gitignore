@@ -5,6 +5,10 @@
 *.pdf
 *.mp4
 Testing.py
+CMT-master/*.pyc
+CMT-master/*.mp4
+CMT-master/*.txt
+CMT-master/OUTPUT/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
