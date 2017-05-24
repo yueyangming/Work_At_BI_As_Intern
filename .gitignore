@@ -9,6 +9,8 @@ CMT-master/*.pyc
 CMT-master/*.mp4
 CMT-master/*.txt
 CMT-master/OUTPUT/
+CMT-master/.DS_Store
+CMT-master/._.DS_Store
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
