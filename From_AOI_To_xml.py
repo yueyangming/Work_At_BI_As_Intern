@@ -4,15 +4,13 @@ from xml.etree.ElementTree import ElementTree
 from xml.etree.ElementTree import Element
 from xml.etree.ElementTree import SubElement
 
-filename = 'Output_test.xml'
-
 def CreateXml( Points, Angle, Color, Name, Visible, Timestamps):
     AOI_Tree = ElementTree()
     Root = Element("ArrayOfDynamicAOI")  # Root Element
     AOI_Tree._setroot(Root)
     DynamicAOI_Node = Element("DynamicAOI")
     # DynamicAOI_Node = Generate_DynamicAOI()
-    KeyFrames_num = 1
+    KeyFrames_num = len(Points) - 1
     DynamicAOI_Node = Generate_DynamicAOI(DynamicAOI_Node, Points, Angle, KeyFrames_num,
                                           Color, Name, Visible, Timestamps)
     Root.append(DynamicAOI_Node)
@@ -48,8 +46,11 @@ def Generate_DynamicAOI(DynamicAOI_Node, Points, Angle, KeyFrames_num,
     KeyFrames_Node = Element('KeyFrames')
     for i in range(KeyFrames_num):
         KeyFrame_Node = Element('KeyFrame')
-        KeyFrames_Node.append(Generate_Key_frame(KeyFrame_Node, Points[i+1][0],
+        try:
+            KeyFrames_Node.append(Generate_Key_frame(KeyFrame_Node, Points[i+1][0],
                                                  Points[i+1][1], Angle[i+1], Visible[i+1], TimeStamps[i+1]))
+        except:
+            print(i)
     DynamicAOI_Node.append(KeyFrames_Node)
     return DynamicAOI_Node
 
@@ -109,5 +110,7 @@ if __name__ == '__main__':
     Visible = [False, True]
     Timestamps = [0, 63012000]
 
-    book = CreateXml(Points, Angle, Color, Name, Visible, Timestamps)
-    book.write(filename, "utf-8")
+    output_xml_filename = 'Output_test.xml'
+
+    Tree = CreateXml(Points, Angle, Color, Name, Visible, Timestamps)
+    Tree.write(output_xml_filename, "utf-8")

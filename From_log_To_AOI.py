@@ -1,9 +1,10 @@
 # *-* coding=utf-8
 
-filename = './CMT-master/111_log.txt'
+input_filename = './CMT-master/111_log.txt'
 
 
 def read_coor(coordinates_str):
+    ## Input Coordinats_str, output: two coordinates, tl and br, (top left and bottom right)
 
     # 'Cooridinates :(569, 533)*(682, 534)*(682, 683)*(568, 682)'
     coordinates_temp = coordinates_str.split(':')[1]  # (569, 533)*(682, 534)*(682, 683)*(568, 682)
@@ -19,9 +20,12 @@ def read_coor(coordinates_str):
 
     return tl, br
 
-def read_log(filename):
+def read_log(input_filename):
+    ## Read log file. input filename with path, output:
+    ## Frame, tl, br,active, Angle, Scale
+    ## All output are lists.
 
-    f = open(filename, 'r')
+    f = open(input_filename, 'r')
     list = []
     Frame = []
     tl = []
@@ -33,11 +37,11 @@ def read_log(filename):
     for line in f.readlines():
 
         temp_line = line.strip('\n')
-        if 'nan' in temp_line:
+        if 'nan' in temp_line:  #If object not detected in Current Frame
             continue
         list.append(temp_line)
         split_temp = temp_line.split('#')
-        Frame.append(split_temp[0].split(':')[1])
+        Frame.append(int(split_temp[0].split(':')[1]))
         tl_temp, br_temp = read_coor(split_temp[1])
         tl.append(tl_temp)
         br.append(br_temp)
@@ -48,6 +52,39 @@ def read_log(filename):
 
     return Frame, tl, br, active, Angle, Scale
 
+def log_to_AOI(Start_Timestamp, Frame,tl,br,Angle):
+    ## Input Start_Timestamp, Frame, tl,br,Angle,
+    ## Output : Points, Angle, Visible, Timestamp
+    ## All are list
 
+    Timestamp = []
+    Points = []
+    Angle_output = []
+    Visible_output = []
 
-# def log_to_AOI(Frame,tl,br,Angle):
+    # One frame after the last, Current Frame in XML file
+    index = len(Frame) - 1
+    Timestamp.append(Start_Timestamp + round((Frame[index] - 1 + 1) * (1 / 24 * 1000)) * 1000)
+    temp = [tl[index], br[index]]
+    Points.append(temp)
+    Angle_output.append(Angle[index])
+    Visible_output.append(False)
+
+    for index in range(len(Frame)):
+        # From Frame to Timestamps
+        Timestamp.append(Start_Timestamp + round((Frame[index] - 1) * (1/24 * 1000)) * 1000)
+        # As opencv start from frame 1 while python start from frame 0
+        temp = [tl[index], br[index]]
+        Points.append(temp)
+        Angle_output.append(Angle[index])
+        Visible_output.append(True)
+        if index != len(Frame) - 1: # Not the last Frame
+            if Frame[index+1] != Frame[index] + 1:   # Next Frame object dispear
+                Timestamp.append(Start_Timestamp + round((Frame[index] - 1 + 1) * (1/24 * 1000)) * 1000)
+                temp = [tl[index], br[index]]
+                Points.append(temp)
+                Angle_output.append(Angle[index])
+                Visible_output.append(False)
+    # The last frame
+
+    return Timestamp, Points, Angle_output, Visible_output

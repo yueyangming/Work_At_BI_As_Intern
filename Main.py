@@ -1,58 +1,29 @@
-import cv2
-import sys
+from From_log_To_AOI import read_coor  # coordinates_str
+from From_log_To_AOI import read_log  # filename
+from From_log_To_AOI import log_to_AOI  # Start_Timestamp, Frame,tl,br,Angle
+
+from From_AOI_To_xml import CreateXml
+from From_AOI_To_xml import Generate_DynamicAOI
+from From_AOI_To_xml import Generate_Key_frame
+from From_AOI_To_xml import Generate_Points_Node
+from From_AOI_To_xml import indent
 
 if __name__ == '__main__':
 
-    # Set up tracker.
-    # Instead of MIL, you can also use
-    # BOOSTING, KCF, TLD, MEDIANFLOW or GOTURN
+    log_filename = './CMT-master/111_log.txt'
+    Start_Timestamp = 0
+    Color = 'Coral'
+    Name = 'AOI 001'
 
-    tracker = cv2.Tracker_create("KCF")
 
-    # Read video
-    video = cv2.VideoCapture("Test_CV_1.mp4")
+    Frame, tl, br, active, Angle, Scale = read_log(log_filename)
 
-    # Exit if video not opened.
-    if not video.isOpened():
-        print("Could not open video")
-        sys.exit()
+    Timestamp, Points, Angle_output, Visible_output = log_to_AOI(Start_Timestamp, Frame, tl, br, Angle)
 
-    # Read first frame.
-    ok, frame = video.read()
-    if not ok:
-        print( 'Cannot read video file')
-        sys.exit()
+    output_xml_filename = 'Output_' + log_filename.split('/')[-1].split('.')[0].split('_')[0] + '.xml'
 
-    # Define an initial bounding box
-    bbox = (287, 23, 86, 320)
 
-    # Uncomment the line below to select a different bounding box
-    # bbox = cv2.selectROI(frame, False)
-    bbox = (726.0, 414.0, 278.0, 52.0)
-    print(bbox)
+    Tree = CreateXml(Points, Angle_output, Color, Name, Visible_output, Timestamp)
+    Tree.write(output_xml_filename, "utf-8")
 
-    # Initialize tracker with first frame and bounding box
-    ok = tracker.init(frame, bbox)
 
-    while True:
-        # Read a new frame
-        ok, frame = video.read()
-        if not ok:
-            break
-
-        # Update tracker
-        ok, bbox = tracker.update(frame)
-
-        # Draw bounding box
-        if ok:
-            p1 = (int(bbox[0]), int(bbox[1]))
-            p2 = (int(bbox[0] + bbox[2]), int(bbox[1] + bbox[3]))
-            cv2.rectangle(frame, p1, p2, (0, 0, 255))
-
-        # Display result
-        cv2.imshow("Tracking", frame)
-
-        # Exit if ESC pressed
-        k = cv2.waitKey(1) & 0xff
-        if k == 27:
-            break
