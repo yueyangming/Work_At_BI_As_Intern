@@ -1,7 +1,6 @@
 # *-* coding=utf-8
 
-input_filename = './CMT-master/111_log.txt'
-
+# input_filename = './CMT-master/111_log.txt'
 
 def read_coor(coordinates_str):
     ## Input Coordinats_str, output: two coordinates, tl and br, (top left and bottom right)
@@ -64,7 +63,8 @@ def log_to_AOI(Start_Timestamp, Frame,tl,br,Angle):
 
     for index in range(len(Frame)):
         # From Frame to Timestamps
-        Timestamp.append(Start_Timestamp + round((Frame[index] - 1) * (1/24 * 1000)) * 1000)
+        timestamp_temp = Start_Timestamp + round((Frame[index] - 1) * (1/24 * 1000)) * 1000
+        Timestamp.append(int(timestamp_temp))
         # As opencv start from frame 1 while python start from frame 0
         temp = [tl[index], br[index]]
         Points.append(temp)
@@ -72,7 +72,8 @@ def log_to_AOI(Start_Timestamp, Frame,tl,br,Angle):
         Visible_output.append(True)
         if index != len(Frame) - 1:  # Not the last Frame
             if Frame[index+1] != Frame[index] + 1:   # Next Frame object dispear
-                Timestamp.append(Start_Timestamp + round((Frame[index] - 1 + 1) * (1/24 * 1000)) * 1000)
+                timestamp_temp = Start_Timestamp + round((Frame[index] - 1) * (1 / 24 * 1000)) * 1000
+                Timestamp.append(int(timestamp_temp))
                 temp = [tl[index], br[index]]
                 Points.append(temp)
                 Angle_output.append(Angle[index])
@@ -81,7 +82,8 @@ def log_to_AOI(Start_Timestamp, Frame,tl,br,Angle):
 
     # One frame after the last, Current Frame in XML file
     index = -1
-    Timestamp.append(Start_Timestamp + round((Frame[index] - 1 + 1) * (1 / 24 * 1000)) * 1000)
+    timestamp_temp = Start_Timestamp + round((Frame[index] - 1) * (1 / 24 * 1000)) * 1000
+    Timestamp.append(int(timestamp_temp))
     temp = [tl[index], br[index]]
     Points.append(temp)
     Angle_temp = (Angle[index] + 360) % 360
