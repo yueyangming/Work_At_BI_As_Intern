@@ -62,14 +62,6 @@ def log_to_AOI(Start_Timestamp, Frame,tl,br,Angle):
     Angle_output = []
     Visible_output = []
 
-    # One frame after the last, Current Frame in XML file
-    index = len(Frame) - 1
-    Timestamp.append(Start_Timestamp + round((Frame[index] - 1 + 1) * (1 / 24 * 1000)) * 1000)
-    temp = [tl[index], br[index]]
-    Points.append(temp)
-    Angle_output.append(Angle[index])
-    Visible_output.append(False)
-
     for index in range(len(Frame)):
         # From Frame to Timestamps
         Timestamp.append(Start_Timestamp + round((Frame[index] - 1) * (1/24 * 1000)) * 1000)
@@ -78,7 +70,7 @@ def log_to_AOI(Start_Timestamp, Frame,tl,br,Angle):
         Points.append(temp)
         Angle_output.append(Angle[index])
         Visible_output.append(True)
-        if index != len(Frame) - 1: # Not the last Frame
+        if index != len(Frame) - 1:  # Not the last Frame
             if Frame[index+1] != Frame[index] + 1:   # Next Frame object dispear
                 Timestamp.append(Start_Timestamp + round((Frame[index] - 1 + 1) * (1/24 * 1000)) * 1000)
                 temp = [tl[index], br[index]]
@@ -86,5 +78,15 @@ def log_to_AOI(Start_Timestamp, Frame,tl,br,Angle):
                 Angle_output.append(Angle[index])
                 Visible_output.append(False)
     # The last frame
+
+    # One frame after the last, Current Frame in XML file
+    index = -1
+    Timestamp.append(Start_Timestamp + round((Frame[index] - 1 + 1) * (1 / 24 * 1000)) * 1000)
+    temp = [tl[index], br[index]]
+    Points.append(temp)
+    Angle_temp = (Angle[index] + 360) % 360
+
+    Angle_output.append(Angle_temp)
+    Visible_output.append(False)
 
     return Timestamp, Points, Angle_output, Visible_output

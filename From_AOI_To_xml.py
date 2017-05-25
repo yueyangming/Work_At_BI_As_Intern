@@ -8,12 +8,15 @@ def CreateXml( Points, Angle, Color, Name, Visible, Timestamps):
     AOI_Tree = ElementTree()
     Root = Element("ArrayOfDynamicAOI")  # Root Element
     AOI_Tree._setroot(Root)
-    DynamicAOI_Node = Element("DynamicAOI")
-    # DynamicAOI_Node = Generate_DynamicAOI()
-    KeyFrames_num = len(Points) - 1
-    DynamicAOI_Node = Generate_DynamicAOI(DynamicAOI_Node, Points, Angle, KeyFrames_num,
-                                          Color, Name, Visible, Timestamps)
-    Root.append(DynamicAOI_Node)
+
+    for AOI_index in range(len(Points)):
+
+        DynamicAOI_Node = Element("DynamicAOI")
+
+        KeyFrames_num = len(Points[AOI_index]) - 1
+        DynamicAOI_Node = Generate_DynamicAOI(DynamicAOI_Node, Points[AOI_index], Angle[AOI_index], KeyFrames_num,
+                                              Color[AOI_index], Name[AOI_index], Visible[AOI_index], Timestamps[AOI_index])
+        Root.append(DynamicAOI_Node)
 
     indent(Root)
 
