@@ -22,12 +22,18 @@ class CMT(object):
     estimate_scale = True
     estimate_rotation = True
 
-    def initialise(self, im_gray0, tl, br, tr, bl):
+    def initialise(self, im_gray0, tl, br, tr, bl, sum_Rotation):
 
         # Initialise detector, descriptor, matcher
-        self.detector = cv2.FeatureDetector_create(self.DETECTOR)
-        self.descriptor = cv2.DescriptorExtractor_create(self.DESCRIPTOR)
-        self.matcher = cv2.DescriptorMatcher_create(self.MATCHER)
+        # Add support to Opencv 3.0 + , copy from github.com/toinsson/CMT
+        if cv2.__version__.split('.')[0] < '3':
+            self.detector = cv2.FeatureDetector_create(self.DETECTOR)
+            self.descriptor = cv2.DescriptorExtractor_create(self.DESCRIPTOR)
+            self.matcher = cv2.DescriptorMatcher_create(self.MATCHER)
+        else:
+            self.detector = cv2.BRISK_create()
+            self.descriptor = self.detector
+            self.matcher = cv2.BFMatcher(cv2.NORM_HAMMING)
 
         # Get initial keypoints in whole image
         keypoints_cv = self.detector.detect(im_gray0)
@@ -70,9 +76,8 @@ class CMT(object):
 
                 # Compute angle of this vector with respect to x axis
                 angle = math.atan2(v[1], v[0])
-
                 # Store angle
-                angles[i1, i2] = angle
+                angles[i1, i2] = angle + sum_Rotation
 
         self.angles = angles
 

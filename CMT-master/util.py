@@ -87,6 +87,10 @@ def get_rect(im, title='get_rect'):
     Rotation_Change_flag = False
     Rotation_Angle = 0
     sum_Rotation = 0
+
+    Coor_change_step = 5  # Coordinate changes in every step
+    direction_dict = {'j': [-Coor_change_step, 0], 'l':[Coor_change_step, 0],
+                      'k': [0, Coor_change_step], 'i': [0, -Coor_change_step]}
     while not Rotation_quit_flag:
 
         k = cv2.waitKey(20)
@@ -94,14 +98,20 @@ def get_rect(im, title='get_rect'):
 
         if key == 'q':
             Rotation_quit_flag = True
-        if key == 'j':
+        if key == 'u':
             Rotation_Angle = 5
             sum_Rotation += 5
             Rotation_Change_flag = True
-        if key == 'k':
+        if key == 'o':
             Rotation_Angle = -5
             sum_Rotation -= 5
             Rotation_Change_flag = True
+        if key in ['j', 'k', 'i', 'l']:
+            vector = direction_dict[key]
+            tl, br, tr, bl = Move_coor(tl, br, tr, bl, vector)
+            im_draw = np.copy(im)
+            Draw_New_Rectangle(im_draw, tl, br, tr, bl)
+            cv2.imshow(title, im_draw)
 
         if Rotation_Change_flag:
             im_draw = np.copy(im)
@@ -111,8 +121,17 @@ def get_rect(im, title='get_rect'):
             Rotation_Change_flag = False
 
     cv2.destroyWindow(title)
+    sum_Rotation = np.deg2rad(sum_Rotation)
 
-    return (tl, br, tr, bl)
+    return (tl, br, tr, bl, sum_Rotation)
+
+
+def Move_coor(tl, br, tr, bl, vector):
+    tl = tuple(np.array(tl) + np.array(vector))
+    tr = tuple(np.array(tr) + np.array(vector))
+    br = tuple(np.array(br) + np.array(vector))
+    bl = tuple(np.array(bl) + np.array(vector))
+    return tl, br, tr, bl
 
 
 def Draw_New_Rectangle(im_draw, tl, br, tr, bl):

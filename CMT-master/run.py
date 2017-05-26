@@ -165,11 +165,11 @@ else:
         br = bbox[2:4]
     else:
         # Get rectangle input from user
-        (tl, br, tr, bl) = util.get_rect(im_draw)
+        (tl, br, tr, bl, sum_Rotation) = util.get_rect(im_draw)
 
     print('using', tl, br, tr, bl, 'as init bb')
 
-    CMT.initialise(im_gray0, tl, br, tr, bl)
+    CMT.initialise(im_gray0, tl, br, tr, bl, sum_Rotation)
 
     frame = 1
     write_Flag = True
@@ -254,8 +254,8 @@ else:
                 # print(Current_Frame)
 
             if key == 'r':   # Reselect the bbox box
-                (tl, br, tr, bl) = util.get_rect(im)
-                CMT.initialise(im_gray, tl, br, tr, bl)
+                (tl, br, tr, bl, sum_Rotation) = util.get_rect(im)
+                CMT.initialise(im_gray, tl, br, tr, bl, sum_Rotation)
                 write_Flag = True
 
             if key == 't':
