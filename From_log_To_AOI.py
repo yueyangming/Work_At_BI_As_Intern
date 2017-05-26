@@ -1,5 +1,5 @@
 # *-* coding=utf-8
-
+from __future__ import division
 # input_filename = './CMT-master/111_log.txt'
 
 def read_coor(coordinates_str):

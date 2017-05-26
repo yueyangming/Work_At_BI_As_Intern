@@ -11,8 +11,8 @@ from From_AOI_To_xml import indent
 
 if __name__ == '__main__':
 
-    Start_Timestamp = 1896098000
-    filename_list = ['20170525_2_testAOI_001_log.txt', '20170525_2_testAOI_002_log.txt']
+    Start_Timestamp = 1926426000
+    filename_list = ['hhhhh_aaaa_log.txt', 'hhhhh_bbbbb_log.txt']
 
     directory = './CMT-master/'
     Timestamp_list = []
