@@ -22,7 +22,7 @@ class CMT(object):
     estimate_scale = True
     estimate_rotation = True
 
-    def initialise(self, im_gray0, tl, br):
+    def initialise(self, im_gray0, tl, br, tr, bl):
 
         # Initialise detector, descriptor, matcher
         self.detector = cv2.FeatureDetector_create(self.DETECTOR)
@@ -33,7 +33,7 @@ class CMT(object):
         keypoints_cv = self.detector.detect(im_gray0)
 
         # Remember keypoints that are in the rectangle as selected keypoints
-        ind = util.in_rect(keypoints_cv, tl, br)
+        ind = util.in_rect(keypoints_cv, tl, br, tr, bl)
         selected_keypoints_cv = list(itertools.compress(keypoints_cv, ind))
         selected_keypoints_cv, self.selected_features = self.descriptor.compute(im_gray0, selected_keypoints_cv)
         selected_keypoints = util.keypoints_cv_to_np(selected_keypoints_cv)
@@ -82,9 +82,11 @@ class CMT(object):
         # Remember the rectangle coordinates relative to the center
         # Change here, use real tl,tr,br,bl # New function, from rect to rect with rotation.
         self.center_to_tl = np.array(tl) - center
-        self.center_to_tr = np.array([br[0], tl[1]]) - center
+        # self.center_to_tr = np.array([br[0], tl[1]]) - center
+        self.center_to_tr = np.array(tr) - center
         self.center_to_br = np.array(br) - center
-        self.center_to_bl = np.array([tl[0], br[1]]) - center
+        # self.center_to_bl = np.array([tl[0], br[1]]) - center
+        self.center_to_bl = np.array(bl) - center
 
         # Calculate springs of each keypoint
         self.springs = selected_keypoints - center

@@ -73,7 +73,13 @@ if args.challenge:
     tl, br = (util.array_to_int_tuple(init_region[:2]), util.array_to_int_tuple(init_region[:2] + init_region[2:4] - 1))
 
     try:
-        CMT.initialise(im_gray0, tl, br)
+        try:
+            CMT.initialise(im_gray0, tl, br, tr, bl)
+        except:
+            print('Error in lin 78 in run.py')
+            tr = (br[0], tl[1])
+            bl = (tl[0], br[1])
+            CMT.initialise(im_gray0, tl, br, tr, bl)
         while frame < num_frames:
             im = cv2.imread(images[frame])
             im_gray = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
@@ -159,11 +165,11 @@ else:
         br = bbox[2:4]
     else:
         # Get rectangle input from user
-        (tl, br) = util.get_rect(im_draw)
+        (tl, br, tr, bl) = util.get_rect(im_draw)
 
-    print('using', tl, br, 'as init bb')
+    print('using', tl, br, tr, bl, 'as init bb')
 
-    CMT.initialise(im_gray0, tl, br)
+    CMT.initialise(im_gray0, tl, br, tr, bl)
 
     frame = 1
     write_Flag = True
@@ -248,8 +254,8 @@ else:
                 # print(Current_Frame)
 
             if key == 'r':   # Reselect the bbox box
-                (tl, br) = util.get_rect(im_draw)
-                CMT.initialise(im_gray, tl, br)
+                (tl, br, tr, bl) = util.get_rect(im)
+                CMT.initialise(im_gray, tl, br, tr, bl)
                 write_Flag = True
 
             if key == 't':
