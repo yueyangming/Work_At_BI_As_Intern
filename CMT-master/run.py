@@ -35,7 +35,8 @@ args = parser.parse_args()
 CMT.estimate_scale = args.estimate_scale
 CMT.estimate_rotation = args.estimate_rotation
 
-log_filename = args.inputpath.split('.')[0] + args.AOI_Name + '_log.txt'
+output_str_list = []
+log_filename = args.inputpath.split('.')[0] + '_' + args.AOI_Name + '_log.txt'
 print(log_filename)
 if os.path.exists(log_filename):  # If log exists, Remove it.
     os.remove(log_filename)
@@ -165,6 +166,7 @@ else:
     CMT.initialise(im_gray0, tl, br)
 
     frame = 1
+    write_Flag = True
     while True:
         # Read image
         status, im = cap.read()
@@ -232,19 +234,26 @@ else:
             #     ipdb.set_trace()
             if key == 'p':  # Enter or get out pause mode
                 pause_time = 10 if pause_time == 0 else 0
-            if key in ['a', 'd']:   # Press a and d to control video flowing
+            if key == 'a':   # Press a and d to control video flowing
                 # Please do not use a for now, as it may have some bugs.
 
-                Frame_change = -5 if key == 'a' else 5
+                Frame_change = -5
                 Current_Frame = cap.get(cv2.cv.CV_CAP_PROP_POS_FRAMES)
                 cap.set(cv2.cv.CV_CAP_PROP_POS_FRAMES, Current_Frame + Frame_change)
                 Current_Frame = cap.get(cv2.cv.CV_CAP_PROP_POS_FRAMES)
+                # print(output_str_list)
+                del output_str_list[Frame_change:]
+                # print(output_str_list)
                 frame += Frame_change
-                print(Current_Frame)
+                # print(Current_Frame)
 
             if key == 'r':   # Reselect the bbox box
                 (tl, br) = util.get_rect(im_draw)
                 CMT.initialise(im_gray, tl, br)
+                write_Flag = True
+
+            if key == 't':
+                write_Flag = not write_Flag
 
         # Remember image
         im_prev = im_gray
@@ -260,7 +269,13 @@ else:
                   'active : {}# Angle: {}# Scale : {}'.format(frame, CMT.tl, CMT.tr,
                                                               CMT.br, CMT.bl, CMT.active_keypoints.shape[0],
                                                               CMT.rotation_estimate / np.pi * 360, CMT.scale_estimate)
-        print(str_new)
+        if write_Flag:
+            print(str_new)
+            output_str_list.append(str_new)
 
-        with open(log_filename, 'a+') as f:
-            f.write(str_new + '\n')
+    with open(log_filename, 'w') as f_output:
+        for each in output_str_list:
+            f_output.write(each + '\n')
+
+        # with open(log_filename, 'a+') as f:
+        #     f.write(str_new + '\n')
