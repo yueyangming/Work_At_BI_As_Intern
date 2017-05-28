@@ -32,6 +32,9 @@ parser.add_argument('--AOI_Name', dest='AOI_Name')
 
 args = parser.parse_args()
 
+args.estimate_rotation = True
+args.pause = True
+
 CMT.estimate_scale = args.estimate_scale
 CMT.estimate_rotation = args.estimate_rotation
 

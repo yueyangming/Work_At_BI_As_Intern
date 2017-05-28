@@ -68,6 +68,7 @@ class CMT(object):
         self.squareform = scipy.spatial.distance.squareform(pdist)
 
         # Get all angles between selected keypoints
+        self.sum_Rotation = sum_Rotation  # Add this to class variable
         angles = np.empty((num_selected_keypoints, num_selected_keypoints))
         for k1, i1 in zip(selected_keypoints, range(num_selected_keypoints)):
             for k2, i2 in zip(selected_keypoints, range(num_selected_keypoints)):
@@ -369,6 +370,8 @@ class CMT(object):
         self.has_result = False
         if not any(isnan(self.center)) and self.active_keypoints.shape[0] > self.num_initial_keypoints / 10:
             self.has_result = True
+
+            # rotation_estimate += self.sum_Rotation  ##
 
             tl = util.array_to_int_tuple(
                 center + scale_estimate * util.rotate(self.center_to_tl[None, :], rotation_estimate).squeeze())
