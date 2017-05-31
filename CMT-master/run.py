@@ -250,11 +250,8 @@ else:
                 Current_Frame = cap.get(cv2.cv.CV_CAP_PROP_POS_FRAMES)
                 cap.set(cv2.cv.CV_CAP_PROP_POS_FRAMES, Current_Frame + Frame_change)
                 Current_Frame = cap.get(cv2.cv.CV_CAP_PROP_POS_FRAMES)
-                # print(output_str_list)
                 del output_str_list[Frame_change:]
-                # print(output_str_list)
                 frame += Frame_change
-                # print(Current_Frame)
 
             if key == 'r':   # Reselect the bbox box
                 (tl, br, tr, bl, sum_Rotation) = util.get_rect(im)
@@ -273,7 +270,6 @@ else:
         str_temp = '{5:04d}: center: {0:.2f},{1:.2f} scale: {2:.2f}, active: {3:03d}, ' \
                    '{4:04.0f}ms'.format(CMT.center[0], CMT.center[1], CMT.scale_estimate,
                                         CMT.active_keypoints.shape[0], 1000 * (toc - tic), frame)
-        # print(str_temp)
         str_new = 'Frame : {}#Cooridinates :{}*{}*{}*{}# ' \
                   'active : {}# Angle: {}# Scale : {}'.format(frame, CMT.tl, CMT.tr,
                                                               CMT.br, CMT.bl, CMT.active_keypoints.shape[0],
@@ -285,6 +281,3 @@ else:
     with open(log_filename, 'w') as f_output:
         for each in output_str_list:
             f_output.write(each + '\n')
-
-        # with open(log_filename, 'a+') as f:
-        #     f.write(str_new + '\n')

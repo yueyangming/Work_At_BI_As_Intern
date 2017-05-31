@@ -68,7 +68,8 @@ class CMT(object):
         self.squareform = scipy.spatial.distance.squareform(pdist)
 
         # Get all angles between selected keypoints
-        self.sum_Rotation = sum_Rotation  # Add this to class variable
+        self.init_Rotation = sum_Rotation  # Add this to class variable
+        # sum_Rotation = 0
         angles = np.empty((num_selected_keypoints, num_selected_keypoints))
         for k1, i1 in zip(selected_keypoints, range(num_selected_keypoints)):
             for k2, i2 in zip(selected_keypoints, range(num_selected_keypoints)):
@@ -78,7 +79,7 @@ class CMT(object):
                 # Compute angle of this vector with respect to x axis
                 angle = math.atan2(v[1], v[0])
                 # Store angle
-                angles[i1, i2] = angle + sum_Rotation
+                angles[i1, i2] = angle
 
         self.angles = angles
 
@@ -88,10 +89,8 @@ class CMT(object):
         # Remember the rectangle coordinates relative to the center
         # Change here, use real tl,tr,br,bl # New function, from rect to rect with rotation.
         self.center_to_tl = np.array(tl) - center
-        # self.center_to_tr = np.array([br[0], tl[1]]) - center
         self.center_to_tr = np.array(tr) - center
         self.center_to_br = np.array(br) - center
-        # self.center_to_bl = np.array([tl[0], br[1]]) - center
         self.center_to_bl = np.array(bl) - center
 
         # Calculate springs of each keypoint
@@ -184,6 +183,8 @@ class CMT(object):
                     scale_estimate = 1;
 
                 med_rot = median(angle_diffs)
+                # if init_anlge_Flag:
+                #     med_rot += self.init_Rotation     # Init angle selected
                 if not self.estimate_rotation:
                     med_rot = 0;
 
@@ -350,6 +351,7 @@ class CMT(object):
                 active_keypoints = tracked_keypoints
 
         # Update object state estimate
+        rotation_estimate += self.init_Rotation
         _ = active_keypoints
         self.center = center
         self.scale_estimate = scale_estimate

@@ -82,6 +82,7 @@ def get_rect(im, title='get_rect'):
 
     tr = (br[0], tl[1])
     bl = (tl[0], br[1])
+    new_tl, new_br, new_tr, new_bl = tl, br, tr, bl
 
     Rotation_quit_flag = False
     Rotation_Change_flag = False
@@ -109,14 +110,16 @@ def get_rect(im, title='get_rect'):
         if key in ['j', 'k', 'i', 'l']:
             vector = direction_dict[key]
             tl, br, tr, bl = Move_coor(tl, br, tr, bl, vector)
+            new_tl, new_br, new_tr, new_bl = Move_coor(new_tl, new_br, new_tr, new_bl,vector)
             im_draw = np.copy(im)
-            Draw_New_Rectangle(im_draw, tl, br, tr, bl)
+            Draw_New_Rectangle(im_draw, new_tl, new_br, new_tr, new_bl)
             cv2.imshow(title, im_draw)
 
         if Rotation_Change_flag:
+            # new_tl, new_br, new_tr, new_bl = tl, br, tr, bl
             im_draw = np.copy(im)
-            tl, br, tr, bl = Update_coor(tl, br, tr, bl, Rotation_Angle)
-            Draw_New_Rectangle(im_draw, tl, br, tr, bl)
+            new_tl, new_br, new_tr, new_bl = Update_coor(new_tl, new_br, new_tr, new_bl, Rotation_Angle)
+            Draw_New_Rectangle(im_draw, new_tl, new_br, new_tr, new_bl)
             cv2.imshow(title, im_draw)
             Rotation_Change_flag = False
 
@@ -168,8 +171,6 @@ def new_coor(target, Angle, center_x, center_y):
     temp_y = int(temp_y)
 
     results = (temp_x, temp_y)
-
-    # print(results)
 
     return results
 
@@ -231,7 +232,6 @@ def draw_keypoints(keypoints, im, color=(255, 0, 0)):
 def track(im_prev, im_gray, keypoints, THR_FB=20):
     if type(keypoints) is list:
         keypoints = keypoints_cv_to_np(keypoints)
-
     num_keypoints = keypoints.shape[0]
 
     # Status of tracked keypoint - True means successfully tracked
@@ -244,7 +244,6 @@ def track(im_prev, im_gray, keypoints, THR_FB=20):
         # Use only first and second column
         # Make sure dtype is float32
         pts = keypoints[:, None, :2].astype(np.float32)
-
         # Calculate forward optical flow for prev_location
         nextPts, status, _ = cv2.calcOpticalFlowPyrLK(im_prev, im_gray, pts, None)
 
