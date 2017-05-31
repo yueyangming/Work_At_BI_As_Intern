@@ -273,7 +273,7 @@ else:
         str_new = 'Frame : {}#Cooridinates :{}*{}*{}*{}# ' \
                   'active : {}# Angle: {}# Scale : {}'.format(frame, CMT.tl, CMT.tr,
                                                               CMT.br, CMT.bl, CMT.active_keypoints.shape[0],
-                                                              CMT.rotation_estimate / np.pi * 360, CMT.scale_estimate)
+                                                              np.rad2deg(CMT.rotation_estimate), CMT.scale_estimate)
         if write_Flag:
             print(str_new)
             output_str_list.append(str_new)
