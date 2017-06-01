@@ -15,6 +15,7 @@ if __name__ == '__main__':
     filename_list = ['hhhhh_aaaa_log.txt', 'hhhhh_bbbbb_log.txt']
 
     directory = './CMT-master/'
+    AVI_filename = filename_list[0].split('_')[0]
     Timestamp_list = []
     Points_list = []
     Angle_output_list = []
@@ -37,9 +38,7 @@ if __name__ == '__main__':
         Angle_output_list.append(Angle_output)
         Visible_output_list.append(Visible_output)
 
-    output_xml_filename = 'Output_' + filename.split('_log.txt')[0].split('_')[0] + '.xml'
+    output_xml_filename = 'Output_' + AVI_filename + '.xml'
 
     Tree = CreateXml(Points_list, Angle_output_list, Color_list, Name_list, Visible_output_list, Timestamp_list)
     Tree.write(output_xml_filename, "utf-8")
-
-
