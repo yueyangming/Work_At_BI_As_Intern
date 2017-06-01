@@ -19,13 +19,12 @@ class CMT(object):
     THR_CONF = 0.75
     THR_RATIO = 0.8
 
-    estimate_scale = True
-    estimate_rotation = True
-
     def initialise(self, im_gray0, tl, br, tr, bl, sum_Rotation):
 
         # Initialise detector, descriptor, matcher
         # Add support to Opencv 3.0 + , copy from github.com/toinsson/CMT
+        self.estimate_scale = True
+        self.estimate_rotation = True
         if cv2.__version__.split('.')[0] < '3':
             self.detector = cv2.FeatureDetector_create(self.DETECTOR)
             self.descriptor = cv2.DescriptorExtractor_create(self.DESCRIPTOR)

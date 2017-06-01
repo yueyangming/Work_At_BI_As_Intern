@@ -99,14 +99,11 @@ def get_rect(im, title='get_rect'):
 
         if key == 'q':
             Rotation_quit_flag = True
-        if key == 'u':
-            Rotation_Angle = 5
-            sum_Rotation += 5
+        if key in['u', 'o']:
+            Rotation_Angle = 5 if key == 'u' else -5
+            sum_Rotation += Rotation_Angle
             Rotation_Change_flag = True
-        if key == 'o':
-            Rotation_Angle = -5
-            sum_Rotation -= 5
-            Rotation_Change_flag = True
+
         if key in ['j', 'k', 'i', 'l']:
             vector = direction_dict[key]
             tl, br, tr, bl = Move_coor(tl, br, tr, bl, vector)
@@ -114,6 +111,11 @@ def get_rect(im, title='get_rect'):
             im_draw = np.copy(im)
             Draw_New_Rectangle(im_draw, new_tl, new_br, new_tr, new_bl)
             cv2.imshow(title, im_draw)
+        if key == 'c':
+            cv2.destroyWindow(title)
+            (tl, br, tr, bl, sum_Rotation) = get_rect(im, 'get_rect')
+            sum_Rotation = np.rad2deg(sum_Rotation)
+            break
 
         if Rotation_Change_flag:
             # new_tl, new_br, new_tr, new_bl = tl, br, tr, bl

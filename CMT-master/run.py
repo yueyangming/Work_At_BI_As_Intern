@@ -32,11 +32,7 @@ parser.add_argument('--AOI_Name', dest='AOI_Name')
 
 args = parser.parse_args()
 
-args.estimate_rotation = True
 args.pause = True
-
-CMT.estimate_scale = args.estimate_scale
-CMT.estimate_rotation = args.estimate_rotation
 
 output_str_list = []
 log_filename = args.inputpath.split('.')[0] + '_' + args.AOI_Name + '_log.txt'
@@ -171,7 +167,7 @@ else:
         # Get rectangle input from user
         (tl, br, tr, bl, sum_Rotation) = util.get_rect(im_draw)
 
-    print('using', tl, br, tr, bl, 'as init bb, Rotation is ', np.rad2deg(sum_Rotation))
+    print('Using {},{},{},{} as init bb, Rotation Angle is {}'.format(tl, br, tr, bl, np.rad2deg(sum_Rotation)))
 
     CMT.initialise(im_gray0, tl, br, tr, bl, sum_Rotation)
 
@@ -239,13 +235,9 @@ else:
             key = chr(k & 255)
             if key == 'q':
                 break
-            # if key == 'd':
-            #     import ipdb
-            #     ipdb.set_trace()
             if key == 'p':  # Enter or get out pause mode
                 pause_time = 10 if pause_time == 0 else 0
             if key == 'a':   # Press a and d to control video flowing
-                # Please do not use a for now, as it may have some bugs.
 
                 Frame_change = -5
                 Current_Frame = cap.get(cv2.cv.CV_CAP_PROP_POS_FRAMES)
@@ -256,6 +248,7 @@ else:
 
             if key == 'r':   # Reselect the bbox box
                 (tl, br, tr, bl, sum_Rotation) = util.get_rect(im)
+                print('Init Rotation : ', sum_Rotation)
                 CMT.initialise(im_gray, tl, br, tr, bl, sum_Rotation)
                 write_Flag = True
 
