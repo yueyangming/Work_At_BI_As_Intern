@@ -166,11 +166,12 @@ else:
         print(bbox)
         tl = bbox[:2]
         br = bbox[2:4]
+        sum_Rotation = 0
     else:
         # Get rectangle input from user
         (tl, br, tr, bl, sum_Rotation) = util.get_rect(im_draw)
 
-    print('using', tl, br, tr, bl, 'as init bb')
+    print('using', tl, br, tr, bl, 'as init bb, Rotation is ', np.rad2deg(sum_Rotation))
 
     CMT.initialise(im_gray0, tl, br, tr, bl, sum_Rotation)
 
@@ -267,12 +268,27 @@ else:
         # Advance frame number
         frame += 1
 
-        str_temp = '{5:04d}: center: {0:.2f},{1:.2f} scale: {2:.2f}, active: {3:03d}, ' \
-                   '{4:04.0f}ms'.format(CMT.center[0], CMT.center[1], CMT.scale_estimate,
-                                        CMT.active_keypoints.shape[0], 1000 * (toc - tic), frame)
+        # str_temp = '{5:04d}: center: {0:.2f},{1:.2f} scale: {2:.2f}, active: {3:03d}, ' \
+        #            '{4:04.0f}ms'.format(CMT.center[0], CMT.center[1], CMT.scale_estimate,
+        #                                 CMT.active_keypoints.shape[0], 1000 * (toc - tic), frame)
+        center = CMT.center
+        self = CMT
+        scale_estimate = self.scale_estimate
+        rotation_estimate = CMT.rotation_estimate
+        # rotation_estimate = CMT.rotation_estimate - CMT.init_Rotation
+
+        tl = util.array_to_int_tuple(
+            center + scale_estimate * util.rotate(self.center_to_tl[None, :], rotation_estimate).squeeze())
+        tr = util.array_to_int_tuple(
+            center + scale_estimate * util.rotate(self.center_to_tr[None, :], rotation_estimate).squeeze())
+        br = util.array_to_int_tuple(
+            center + scale_estimate * util.rotate(self.center_to_br[None, :], rotation_estimate).squeeze())
+        bl = util.array_to_int_tuple(
+            center + scale_estimate * util.rotate(self.center_to_bl[None, :], rotation_estimate).squeeze())
+
         str_new = 'Frame : {}#Cooridinates :{}*{}*{}*{}# ' \
-                  'active : {}# Angle: {}# Scale : {}'.format(frame, CMT.tl, CMT.tr,
-                                                              CMT.br, CMT.bl, CMT.active_keypoints.shape[0],
+                  'active : {}# Angle: {}# Scale : {}'.format(frame, tl, tr,
+                                                              br, bl, CMT.active_keypoints.shape[0],
                                                               np.rad2deg(CMT.rotation_estimate), CMT.scale_estimate)
         if write_Flag:
             print(str_new)

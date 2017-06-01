@@ -85,6 +85,7 @@ class CMT(object):
 
         # Find the center of selected keypoints
         center = np.mean(selected_keypoints, axis=0)
+        self.center = center
 
         # Remember the rectangle coordinates relative to the center
         # Change here, use real tl,tr,br,bl # New function, from rect to rect with rotation.
